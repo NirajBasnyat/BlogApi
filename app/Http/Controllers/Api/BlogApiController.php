@@ -17,15 +17,19 @@ class BlogApiController extends Controller
 
     public function index(): ?JsonResponse
     {
-        if (auth()->user()->is_admin == 1) {
-            return $this->successResponse(BlogResource::collection(Blog::all()), 'Blog List');
+        if (!auth()->user()->hasPermissionTo('access_blogs')) {
+            return $this->errorResponse(null, 'You donot have right permissions', 401);
         }
 
-        return $this->successResponse(BlogResource::collection(Blog::where('user_id', auth()->id())->get()), 'Blog List');
+        return $this->successResponse(BlogResource::collection(Blog::all()), 'Blog List');
     }
 
     public function store(BlogApiRequest $request): JsonResponse
     {
+        if (!auth()->user()->hasPermissionTo('create_blog')) {
+            return $this->errorResponse(null, 'You donot have right permissions', 401);
+        }
+
         $blog = auth()->user()->blogs()->create($request->validated());
 
         if ($request->hasFile('image')) {
@@ -38,6 +42,10 @@ class BlogApiController extends Controller
 
     public function show(Blog $blog): JsonResponse
     {
+        if (!auth()->user()->hasPermissionTo('view_blog_post')) {
+            return $this->errorResponse(null, 'You donot have right permissions', 401);
+        }
+
         if ($this->checkAuthorizedUser($blog, 'user_id')) {
 
             return $this->successResponse(new BlogResource($blog), 'Single Blog Post');
@@ -48,6 +56,10 @@ class BlogApiController extends Controller
 
     public function update(BlogApiRequest $request, Blog $blog): JsonResponse
     {
+        if (!auth()->user()->hasPermissionTo('update_blog')) {
+            return $this->errorResponse(null, 'You donot have right permissions', 401);
+        }
+
         if ($this->checkAuthorizedUser($blog, 'user_id')) {
             $blog->update($request->validated());
 
@@ -64,6 +76,10 @@ class BlogApiController extends Controller
 
     public function destroy(Blog $blog): JsonResponse
     {
+        if (!auth()->user()->hasPermissionTo('delete_blog')) {
+            return $this->errorResponse(null, 'You donot have right permissions', 401);
+        }
+
         if ($this->checkAuthorizedUser($blog, 'user_id')) {
             $blog->delete();
 
@@ -71,5 +87,19 @@ class BlogApiController extends Controller
         }
 
         return $this->errorResponse(null, 'Cannot delete this blog item', 403);
+    }
+
+    public function myBlogs()
+    {
+        if (!auth()->user()->hasPermissionTo('access_my_blogs')) {
+            return $this->errorResponse(null, 'You donot have right permissions', 401);
+        }
+
+        if (auth()->user()->is_admin == 1) {
+            return $this->successResponse(BlogResource::collection(Blog::all()), 'Blog List');
+        }
+
+        return $this->successResponse(BlogResource::collection(Blog::where('user_id', auth()->id())->get()), 'Blog List');
+
     }
 }

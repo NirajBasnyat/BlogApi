@@ -16,6 +16,10 @@ class CommentApiController extends Controller
 
     public function store(Blog $blog, CommentApiRequest $request): JsonResponse
     {
+        if (!auth()->user()->hasPermissionTo('create_comment')) {
+            return $this->errorResponse(null, 'You donot have right permissions', 401);
+        }
+
         $comment = $blog->comments()->create([
             'title' => $request->title,
             'body' => $request->body,
@@ -27,6 +31,10 @@ class CommentApiController extends Controller
 
     public function update(Blog $blog, Comment $comment, CommentApiRequest $request): JsonResponse
     {
+        if (!auth()->user()->hasPermissionTo('update_comment')) {
+            return $this->errorResponse(null, 'You donot have right permissions', 401);
+        }
+
         if($blog->id != $comment->blog_id){
             return $this->errorResponse(null, 'Comment Not Found', 404);
         }
@@ -46,6 +54,10 @@ class CommentApiController extends Controller
 
     public function destroy(Blog $blog, Comment $comment): JsonResponse
     {
+        if (!auth()->user()->hasPermissionTo('delete_comment')) {
+            return $this->errorResponse(null, 'You donot have right permissions', 401);
+        }
+
         if($blog->id != $comment->blog_id){
             return $this->errorResponse(null, 'Comment Not Found', 404);
         }

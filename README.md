@@ -37,13 +37,52 @@
 ** Credentials **
 
 - Admin
+  `` username: admin@admin.com  ---  password: 123@admin ``
 
-  `` username: admin@admin.com
-  password: 123@admin
-  ``
+        ADMIN's Permissions
+
+        //blog
+            'access_blogs',
+            'access_my_blogs',
+            'create_blog',
+            'update_blog',
+            'view_blog_post',
+            'delete_blog',
+
+            //users
+            'access_users',
+
+            //comments
+            'create_comment',
+            'delete_comment',
+            'update_comment',
+
+- Author
+  `` username: author@mail.com  ---  password: password ``
+
+        Author's Permissions
+
+        
+            //blog
+            'access_blogs',
+            'access_my_blogs',
+            'create_blog',
+            'update_blog',
+            
+            //comments
+            'create_comment',
+            'update_comment'
 
 - User
+  `` username: user@mail.com  ---  password: password ``
 
-  `` username: user@mail.com
-  password: password
-  ``
+        USER's Permissions
+
+        
+            //blog
+            'access_blogs',
+           
+            //comments
+            'create_comment',
+            'update_comment'
+          
